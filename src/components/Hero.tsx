@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { MessageCircle, ArrowDown, Wrench, Shield, Clock } from "lucide-react";
+import { MessageCircle, ArrowDown, Wrench, Shield, Clock, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const WHATSAPP_NUMBER = "5567993073133";
 
@@ -13,92 +14,117 @@ const badges = [
 ];
 
 const Hero = () => (
-  <section className="relative min-h-screen flex items-center justify-center px-6 pt-16 overflow-hidden">
-    {/* Subtle grid pattern */}
-    <div
-      className="absolute inset-0 opacity-[0.03]"
-      style={{
-        backgroundImage: `radial-gradient(circle at 1px 1px, hsl(40 65% 55%) 1px, transparent 0)`,
-        backgroundSize: "40px 40px",
-      }}
-    />
+  <section className="relative overflow-hidden bg-brand-splash">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-28 pb-16 sm:pt-32 sm:pb-20">
+      <div className="grid lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-14 items-center">
+        <div className="text-left">
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.08, duration: 0.5 }}
+            className="inline-flex items-center gap-2 rounded-full border border-border bg-card/40 px-4 py-2 text-xs font-semibold text-muted-foreground shadow-sm shadow-black/20"
+          >
+            <Sparkles className="h-4 w-4 text-primary" />
+            Direto ao ponto: orçamento pelo WhatsApp
+          </motion.div>
 
-    {/* Ambient glow */}
-    <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] rounded-full bg-primary/4 blur-[150px] pointer-events-none" />
-    <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent pointer-events-none" />
+          <motion.h1
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.16, duration: 0.6 }}
+            className="mt-6 text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-extrabold tracking-tight leading-[0.98]"
+          >
+            Conserto de celular com
+            <span className="text-gradient-gold"> agilidade</span>
+            <br />
+            e um toque de
+            <span className="text-gradient-gold"> confiança</span>.
+          </motion.h1>
 
-    <div className="relative z-10 max-w-4xl mx-auto text-center">
-      {/* Top badge */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1, duration: 0.5 }}
-        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border bg-secondary/50 text-xs font-medium text-muted-foreground mb-8"
-      >
-        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-        Assistência Técnica Especializada
-      </motion.div>
+          <motion.p
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.26, duration: 0.55 }}
+            className="mt-5 text-base sm:text-lg text-muted-foreground leading-relaxed max-w-xl"
+          >
+            Diagnóstico rápido, serviço caprichado e atendimento direto com o técnico.
+            Sem enrolação, sem mistério.
+          </motion.p>
 
-      <motion.h1
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2, duration: 0.7 }}
-        className="text-5xl sm:text-6xl md:text-8xl font-extrabold tracking-tight leading-[0.9] mb-6"
-      >
-        <span className="text-foreground">Foca no</span>
-        <br />
-        <span className="text-gradient-gold">Cell</span>
-      </motion.h1>
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.34, duration: 0.55 }}
+            className="mt-8 flex flex-col sm:flex-row gap-3 sm:items-center"
+          >
+            <Button asChild size="lg" className="sm:w-auto">
+              <a href={makeWhatsAppUrl("Olá! Vim pelo site da Foca no Cell.")} target="_blank" rel="noopener noreferrer">
+                <MessageCircle className="h-5 w-5" />
+                Chamar no WhatsApp
+              </a>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="sm:w-auto">
+              <a href="#catalogo">
+                Ver serviços
+                <ArrowDown className="h-4 w-4" />
+              </a>
+            </Button>
+          </motion.div>
 
-      <motion.p
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4, duration: 0.6 }}
-        className="text-lg md:text-xl text-muted-foreground max-w-lg mx-auto mb-10 font-light leading-relaxed"
-      >
-        Conserto rápido, peças de qualidade e atendimento direto pelo WhatsApp.
-        Seu celular em boas mãos.
-      </motion.p>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.46, duration: 0.55 }}
+            className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3"
+          >
+            {badges.map((b) => (
+              <div key={b.label} className="flex items-center gap-2 text-muted-foreground">
+                <b.icon className="h-4 w-4 text-primary" />
+                <span className="text-xs font-semibold tracking-wide">{b.label}</span>
+              </div>
+            ))}
+          </motion.div>
+        </div>
 
-      {/* CTA buttons */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6, duration: 0.5 }}
-        className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-16"
-      >
-        <a
-          href={makeWhatsAppUrl("Olá! Vim pelo site da Foca no Cell.")}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-full sm:w-auto px-8 py-4 rounded-lg bg-whatsapp text-whatsapp-foreground font-semibold text-base hover:opacity-90 transition-all inline-flex items-center justify-center gap-2.5 shadow-lg shadow-whatsapp/20"
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.22, duration: 0.7 }}
+          className="relative"
         >
-          <MessageCircle className="w-5 h-5" />
-          Falar no WhatsApp
-        </a>
-        <a
-          href="#catalogo"
-          className="w-full sm:w-auto px-8 py-4 rounded-lg border border-border bg-secondary/40 text-foreground font-semibold text-base hover:bg-secondary/70 transition-all inline-flex items-center justify-center gap-2"
-        >
-          Ver Serviços
-          <ArrowDown className="w-4 h-4" />
-        </a>
-      </motion.div>
-
-      {/* Trust badges */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.9, duration: 0.6 }}
-        className="flex items-center justify-center gap-6 md:gap-10"
-      >
-        {badges.map((b) => (
-          <div key={b.label} className="flex items-center gap-2 text-muted-foreground">
-            <b.icon className="w-4 h-4 text-primary/70" />
-            <span className="text-xs font-medium">{b.label}</span>
+          <div className="absolute -inset-6 -z-10 rounded-[2.5rem] bg-gold-gradient-subtle blur-2xl" />
+          <div className="relative overflow-hidden rounded-[2.25rem] border border-border bg-card shadow-gold-lg">
+            <div className="aspect-[4/3] sm:aspect-[16/11]">
+              <img
+                src="/icone.jpg"
+                alt="Mascote e identidade Foca no Cell"
+                className="h-full w-full object-cover"
+                loading="eager"
+              />
+            </div>
+            <div className="grid grid-cols-3 gap-2 p-4 sm:p-5 border-t border-border bg-card/60">
+              <div className="flex items-center gap-2">
+                <span className="h-9 w-9 rounded-2xl bg-primary/15 border border-primary/20 flex items-center justify-center">
+                  <Wrench className="h-4 w-4 text-primary" />
+                </span>
+                <span className="text-xs font-semibold text-muted-foreground">Reparo</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="h-9 w-9 rounded-2xl bg-primary/15 border border-primary/20 flex items-center justify-center">
+                  <Shield className="h-4 w-4 text-primary" />
+                </span>
+                <span className="text-xs font-semibold text-muted-foreground">Garantia</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="h-9 w-9 rounded-2xl bg-primary/15 border border-primary/20 flex items-center justify-center">
+                  <Clock className="h-4 w-4 text-primary" />
+                </span>
+                <span className="text-xs font-semibold text-muted-foreground">Rápido</span>
+              </div>
+            </div>
           </div>
-        ))}
-      </motion.div>
+        </motion.div>
+      </div>
     </div>
   </section>
 );
