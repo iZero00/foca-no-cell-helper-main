@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Copy, Ticket } from "lucide-react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 const coupons = [
   { code: "FOCA10", description: "10% OFF em troca de tela", validity: "Tempo limitado" },
@@ -14,24 +15,27 @@ const Coupons = () => {
   };
 
   return (
-    <section id="cupons" className="py-24 px-6">
+    <section id="cupons" className="py-20 sm:py-24 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mb-16"
+          className="mb-12 sm:mb-16"
         >
-          <div className="line-gold mb-4" />
-          <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-3">
-            Cupons de <span className="text-gradient-gold">Desconto</span>
+          <div className="inline-flex items-center gap-3 rounded-full border border-border bg-card/40 px-4 py-2 text-xs font-semibold text-muted-foreground shadow-sm shadow-black/20">
+            <Ticket className="h-4 w-4 text-primary" />
+            Cupons do mês
+          </div>
+          <h2 className="mt-5 text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
+            Desconto na conversa, sem complicação
           </h2>
-          <p className="text-muted-foreground max-w-md">
-            Informe o cupom no WhatsApp no momento do atendimento.
+          <p className="mt-3 text-muted-foreground max-w-2xl leading-relaxed">
+            Copie o cupom e envie no WhatsApp na hora do atendimento.
           </p>
         </motion.div>
 
-        <div className="grid gap-4 sm:grid-cols-2 max-w-2xl">
+        <div className="grid gap-4 sm:gap-5 sm:grid-cols-2 max-w-3xl">
           {coupons.map((c, i) => (
             <motion.div
               key={c.code}
@@ -39,10 +43,10 @@ const Coupons = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.12 }}
-              className="bg-card border border-border rounded-lg p-6 hover:border-primary/20 transition-all group"
+              className="rounded-[1.75rem] border border-border bg-card shadow-sm shadow-black/25 ring-1 ring-white/5 p-6 transition-all hover:-translate-y-1 hover:border-primary/25 hover:shadow-gold"
             >
               <div className="flex items-start justify-between mb-4">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <div className="w-11 h-11 rounded-2xl bg-primary/15 border border-primary/20 flex items-center justify-center">
                   <Ticket className="w-5 h-5 text-primary" />
                 </div>
                 <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-medium mt-1">
@@ -50,13 +54,15 @@ const Coupons = () => {
                 </span>
               </div>
 
-              <button
+              <Button
                 onClick={() => copyCode(c.code)}
-                className="inline-flex items-center gap-2 bg-secondary/60 border border-border rounded-md px-4 py-2.5 font-mono font-bold text-primary text-lg mb-3 hover:bg-secondary transition-colors w-full justify-center"
+                variant="outline"
+                className="w-full justify-center font-mono text-lg tracking-tight h-12 mb-3"
+                aria-label={`Copiar cupom ${c.code}`}
               >
                 {c.code}
                 <Copy className="w-4 h-4 text-muted-foreground" />
-              </button>
+              </Button>
 
               <p className="text-sm text-muted-foreground text-center">{c.description}</p>
             </motion.div>

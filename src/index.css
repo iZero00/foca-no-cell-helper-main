@@ -6,56 +6,65 @@
 
 @layer base {
   :root {
-    --brand-yellow: 46 100% 55%;
-    --brand-yellow-soft: 46 100% 62%;
-    --brand-sand: 28 22% 74%;
-    --brand-charcoal: 220 18% 8%;
-    --brand-slate: 220 12% 14%;
-    --brand-ink: 220 20% 4%;
+    /* Paleta extraída do ícone (public/icone.jpg)
+       Primária:   #F8C800 (hsl(48 100% 49%))
+       Secundária: #483020 (hsl(24 38% 20%))
+       Apoio:      #A09080 (hsl(30 14% 56%))
+       Destaque:   #F8D010 (hsl(50 94% 52%))
+       Escuros:    #080000 (hsl(0 100% 2%)), #202020 (hsl(0 0% 13%))
+    */
+    --brand-yellow: 48 100% 49%;
+    --brand-yellow-soft: 48 94% 52%;
+    --brand-yellow-highlight: 50 94% 52%;
+    --brand-brown: 24 38% 20%;
+    --brand-taupe: 30 14% 56%;
+    --brand-charcoal: 0 0% 7%;
+    --brand-slate: 0 0% 13%;
+    --brand-ink: 0 100% 2%;
     --brand-white: 0 0% 100%;
 
     --background: var(--brand-charcoal);
-    --foreground: 45 25% 96%;
+    --foreground: 48 25% 96%;
 
-    --card: 220 16% 11%;
-    --card-foreground: 45 25% 96%;
+    --card: 0 0% 10%;
+    --card-foreground: 48 25% 96%;
 
-    --popover: 220 16% 11%;
-    --popover-foreground: 45 25% 96%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 48 25% 96%;
 
     --primary: var(--brand-yellow);
-    --primary-foreground: 220 20% 6%;
-    --primary-hover: 46 100% 50%;
-    --primary-active: 46 100% 46%;
+    --primary-foreground: 0 0% 8%;
+    --primary-hover: 48 100% 45%;
+    --primary-active: 48 100% 40%;
 
-    --secondary: 220 12% 16%;
-    --secondary-foreground: 45 25% 96%;
+    --secondary: var(--brand-brown);
+    --secondary-foreground: 48 25% 96%;
 
-    --muted: 220 12% 14%;
-    --muted-foreground: 220 10% 72%;
+    --muted: 0 0% 13%;
+    --muted-foreground: 30 8% 72%;
 
-    --accent: 220 12% 16%;
-    --accent-foreground: 45 25% 96%;
+    --accent: 0 0% 13%;
+    --accent-foreground: 48 25% 96%;
 
     --destructive: 0 84% 58%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 10% 22%;
-    --input: 220 10% 22%;
+    --border: 24 12% 24%;
+    --input: 24 12% 24%;
     --ring: var(--brand-yellow);
 
     --radius: 1rem;
 
     --whatsapp: var(--brand-yellow);
-    --whatsapp-foreground: 220 20% 6%;
+    --whatsapp-foreground: 0 0% 8%;
 
     --sidebar-background: var(--brand-charcoal);
-    --sidebar-foreground: 220 10% 78%;
+    --sidebar-foreground: 30 8% 78%;
     --sidebar-primary: var(--brand-yellow);
-    --sidebar-primary-foreground: 220 20% 6%;
-    --sidebar-accent: 220 12% 14%;
-    --sidebar-accent-foreground: 220 10% 78%;
-    --sidebar-border: 220 10% 22%;
+    --sidebar-primary-foreground: 0 0% 8%;
+    --sidebar-accent: 0 0% 13%;
+    --sidebar-accent-foreground: 30 8% 78%;
+    --sidebar-border: 24 12% 24%;
     --sidebar-ring: var(--brand-yellow);
   }
 }
@@ -78,7 +87,7 @@
 @layer utilities {
   .text-gradient-gold {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(var(--brand-yellow-soft)), hsl(var(--brand-yellow)));
+    background-image: linear-gradient(135deg, hsl(var(--brand-yellow-soft)), hsl(var(--brand-yellow-highlight)));
   }
 
   .border-gold-subtle {
@@ -96,7 +105,7 @@
   }
 
   .bg-gold-gradient {
-    background: linear-gradient(135deg, hsl(var(--brand-yellow-soft)), hsl(var(--brand-yellow)));
+    background: linear-gradient(135deg, hsl(var(--brand-yellow-soft)), hsl(var(--brand-yellow-highlight)));
   }
 
   .bg-gold-gradient-subtle {
@@ -120,7 +129,7 @@
   .bg-brand-splash {
     background:
       radial-gradient(700px 260px at 16% 10%, hsl(var(--brand-yellow) / 0.26), transparent 65%),
-      radial-gradient(560px 220px at 90% 18%, hsl(var(--brand-sand) / 0.18), transparent 60%),
+      radial-gradient(560px 220px at 90% 18%, hsl(var(--brand-taupe) / 0.18), transparent 60%),
       radial-gradient(520px 320px at 55% 100%, hsl(var(--brand-yellow) / 0.12), transparent 70%);
   }
 }
@@ -139,10 +148,10 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsl(220 10% 28%);
+  background: hsl(24 10% 28%);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(220 10% 34%);
+  background: hsl(24 10% 34%);
 }
