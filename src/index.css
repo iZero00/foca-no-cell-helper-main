@@ -1,0 +1,148 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --brand-yellow: 46 100% 55%;
+    --brand-yellow-soft: 46 100% 62%;
+    --brand-sand: 28 22% 74%;
+    --brand-charcoal: 220 18% 8%;
+    --brand-slate: 220 12% 14%;
+    --brand-ink: 220 20% 4%;
+    --brand-white: 0 0% 100%;
+
+    --background: var(--brand-charcoal);
+    --foreground: 45 25% 96%;
+
+    --card: 220 16% 11%;
+    --card-foreground: 45 25% 96%;
+
+    --popover: 220 16% 11%;
+    --popover-foreground: 45 25% 96%;
+
+    --primary: var(--brand-yellow);
+    --primary-foreground: 220 20% 6%;
+    --primary-hover: 46 100% 50%;
+    --primary-active: 46 100% 46%;
+
+    --secondary: 220 12% 16%;
+    --secondary-foreground: 45 25% 96%;
+
+    --muted: 220 12% 14%;
+    --muted-foreground: 220 10% 72%;
+
+    --accent: 220 12% 16%;
+    --accent-foreground: 45 25% 96%;
+
+    --destructive: 0 84% 58%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 10% 22%;
+    --input: 220 10% 22%;
+    --ring: var(--brand-yellow);
+
+    --radius: 1rem;
+
+    --whatsapp: var(--brand-yellow);
+    --whatsapp-foreground: 220 20% 6%;
+
+    --sidebar-background: var(--brand-charcoal);
+    --sidebar-foreground: 220 10% 78%;
+    --sidebar-primary: var(--brand-yellow);
+    --sidebar-primary-foreground: 220 20% 6%;
+    --sidebar-accent: 220 12% 14%;
+    --sidebar-accent-foreground: 220 10% 78%;
+    --sidebar-border: 220 10% 22%;
+    --sidebar-ring: var(--brand-yellow);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', sans-serif;
+  }
+}
+
+@layer utilities {
+  .text-gradient-gold {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--brand-yellow-soft)), hsl(var(--brand-yellow)));
+  }
+
+  .border-gold-subtle {
+    border-color: hsl(40 65% 55% / 0.15);
+  }
+
+  .shadow-gold {
+    box-shadow: 0 14px 50px hsl(var(--brand-yellow) / 0.08);
+  }
+
+  .shadow-gold-lg {
+    box-shadow:
+      0 22px 90px hsl(var(--brand-yellow) / 0.12),
+      0 2px 0 hsl(var(--brand-white) / 0.04) inset;
+  }
+
+  .bg-gold-gradient {
+    background: linear-gradient(135deg, hsl(var(--brand-yellow-soft)), hsl(var(--brand-yellow)));
+  }
+
+  .bg-gold-gradient-subtle {
+    background: linear-gradient(135deg, hsl(var(--brand-yellow) / 0.12), hsl(var(--brand-yellow) / 0.02));
+  }
+
+  .glow-gold {
+    filter: drop-shadow(0 0 18px hsl(var(--brand-yellow) / 0.26));
+  }
+
+  .glass {
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+  }
+
+  .line-gold {
+    @apply h-px w-16;
+    background: linear-gradient(90deg, hsl(var(--brand-yellow)), transparent);
+  }
+
+  .bg-brand-splash {
+    background:
+      radial-gradient(700px 260px at 16% 10%, hsl(var(--brand-yellow) / 0.26), transparent 65%),
+      radial-gradient(560px 220px at 90% 18%, hsl(var(--brand-sand) / 0.18), transparent 60%),
+      radial-gradient(520px 320px at 55% 100%, hsl(var(--brand-yellow) / 0.12), transparent 70%);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--brand-ink));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(220 10% 28%);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(220 10% 34%);
+}
