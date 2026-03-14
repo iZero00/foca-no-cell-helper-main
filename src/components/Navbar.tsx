@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { getWhatsAppUrl, useSiteConfig } from "@/context/site-config";
 
 const links = [
   { label: "Serviços", href: "#catalogo" },
@@ -11,11 +12,10 @@ const links = [
   { label: "Contato", href: "#contato" },
 ];
 
-const WHATSAPP_NUMBER = "5567993073133";
-
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { config } = useSiteConfig();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -57,7 +57,7 @@ const Navbar = () => {
             ))}
             <Button asChild className="ml-2">
               <a
-                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Olá! Vim pelo site da Foca no Cell.")}`}
+                href={getWhatsAppUrl(config)}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -105,7 +105,7 @@ const Navbar = () => {
                 onClick={() => setMobileOpen(false)}
               >
                 <a
-                  href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Olá! Vim pelo site da Foca no Cell.")}`}
+                  href={getWhatsAppUrl(config)}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

@@ -2,10 +2,12 @@ import { motion } from "framer-motion";
 import { MessageCircle, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const WHATSAPP_NUMBER = "5567993073133";
+import { getWhatsAppUrl, useSiteConfig } from "@/context/site-config";
 
-const Contact = () => (
-  <section id="contato" className="py-20 sm:py-24 px-4 sm:px-6">
+const Contact = () => {
+  const { config } = useSiteConfig();
+  return (
+    <section id="contato" className="py-20 sm:py-24 px-4 sm:px-6">
     <div className="max-w-6xl mx-auto">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
@@ -26,7 +28,7 @@ const Contact = () => (
 
           <Button asChild size="lg" className="mx-auto">
             <a
-              href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Olá! Quero um orçamento.")}`}
+              href={getWhatsAppUrl(config, "Olá! Quero um orçamento.")}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -39,6 +41,7 @@ const Contact = () => (
       </motion.div>
     </div>
   </section>
-);
+  );
+};
 
 export default Contact;

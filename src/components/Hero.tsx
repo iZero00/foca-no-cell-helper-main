@@ -2,10 +2,7 @@ import { motion } from "framer-motion";
 import { MessageCircle, ArrowDown, Wrench, Shield, Clock, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const WHATSAPP_NUMBER = "5567993073133";
-
-const makeWhatsAppUrl = (message: string) =>
-  `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+import { getWhatsAppUrl, useSiteConfig } from "@/context/site-config";
 
 const badges = [
   { icon: Clock, label: "Reparo Rápido" },
@@ -13,8 +10,10 @@ const badges = [
   { icon: Wrench, label: "Peças Originais" },
 ];
 
-const Hero = () => (
-  <section className="relative overflow-hidden bg-brand-splash">
+const Hero = () => {
+  const { config } = useSiteConfig();
+  return (
+    <section className="relative overflow-hidden bg-brand-splash">
     <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-28 pb-16 sm:pt-32 sm:pb-20">
       <div className="grid lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-14 items-center">
         <div className="text-left">
@@ -58,7 +57,7 @@ const Hero = () => (
             className="mt-8 flex flex-col sm:flex-row gap-3 sm:items-center"
           >
             <Button asChild size="lg" className="sm:w-auto">
-              <a href={makeWhatsAppUrl("Olá! Vim pelo site da Foca no Cell.")} target="_blank" rel="noopener noreferrer">
+              <a href={getWhatsAppUrl(config, "Olá! Vim pelo site da Foca no Cell.")} target="_blank" rel="noopener noreferrer">
                 <MessageCircle className="h-5 w-5" />
                 Chamar no WhatsApp
               </a>
@@ -127,6 +126,7 @@ const Hero = () => (
       </div>
     </div>
   </section>
-);
+  );
+};
 
 export default Hero;

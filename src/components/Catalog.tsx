@@ -7,10 +7,7 @@ import imgConector from "@/assets/service-conector.jpg";
 import imgSoftware from "@/assets/service-software.jpg";
 import imgAcessorios from "@/assets/service-acessorios.jpg";
 
-const WHATSAPP_NUMBER = "5567993073133";
-
-const makeWhatsAppUrl = (message: string) =>
-  `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+import { getWhatsAppUrl, useSiteConfig } from "@/context/site-config";
 
 const services = [
   { name: "Troca de Tela", description: "iPhone, Samsung, Motorola e outras marcas", price: "Sob consulta", message: "Olá! Tenho interesse na Troca de Tela. Pode me passar mais informações?", image: imgTela },
@@ -21,8 +18,10 @@ const services = [
   { name: "Acessórios", description: "Capas, cabos, películas e fones", price: "Consultar", message: "Olá! Gostaria de ver os acessórios disponíveis.", image: imgAcessorios },
 ];
 
-const Catalog = () => (
-  <section id="catalogo" className="py-20 sm:py-24 px-4 sm:px-6">
+const Catalog = () => {
+  const { config } = useSiteConfig();
+  return (
+    <section id="catalogo" className="py-20 sm:py-24 px-4 sm:px-6">
     <div className="max-w-6xl mx-auto">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -47,7 +46,7 @@ const Catalog = () => (
         {services.map((s, i) => (
           <motion.a
             key={s.name}
-            href={makeWhatsAppUrl(s.message)}
+            href={getWhatsAppUrl(config, s.message)}
             target="_blank"
             rel="noopener noreferrer"
             initial={{ opacity: 0, y: 30 }}
@@ -92,6 +91,7 @@ const Catalog = () => (
       </div>
     </div>
   </section>
-);
+  );
+};
 
 export default Catalog;

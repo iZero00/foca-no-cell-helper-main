@@ -1,8 +1,11 @@
 import { Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { getWhatsAppUrl, useSiteConfig } from "@/context/site-config";
 
-const Footer = () => (
-  <footer className="border-t border-border bg-card/15">
+const Footer = () => {
+  const { config } = useSiteConfig();
+  return (
+    <footer className="border-t border-border bg-card/15">
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-10">
         <div className="flex items-center gap-3">
@@ -33,7 +36,7 @@ const Footer = () => (
         <div className="flex items-center gap-2">
           <Button asChild size="icon" aria-label="WhatsApp">
             <a
-              href={`https://wa.me/5567993073133?text=${encodeURIComponent("Olá! Vim pelo site da Foca no Cell.")}`}
+              href={getWhatsAppUrl(config)}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -53,6 +56,7 @@ const Footer = () => (
       </div>
     </div>
   </footer>
-);
+  );
+};
 
 export default Footer;
