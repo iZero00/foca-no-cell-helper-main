@@ -71,3 +71,52 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+
+## Segurança
+
+### Checks automatizados
+
+- Segredos (Secretlint):
+  - Config: [.secretlintrc.json](file:///c:/Users/Vinicius%20Bassini/Downloads/foca-no-cell-helper-main/.secretlintrc.json), [.secretlintignore](file:///c:/Users/Vinicius%20Bassini/Downloads/foca-no-cell-helper-main/.secretlintignore)
+  - Execução: `npm run security:secrets`
+- CSP/headers (CSP Evaluator + validação mínima):
+  - Script: [security-check.mjs](file:///c:/Users/Vinicius%20Bassini/Downloads/foca-no-cell-helper-main/scripts/security-check.mjs)
+  - Fonte: [vercel.json](file:///c:/Users/Vinicius%20Bassini/Downloads/foca-no-cell-helper-main/vercel.json)
+  - Execução: `npm run security:csp`
+- Vulnerabilidades em dependências (produção):
+  - Execução: `npm run security:audit`
+- Consolidação:
+  - Execução: `npm run security:check`
+
+### Mitigação de injeção CSS (Charts)
+
+- Implementação: [chart.tsx](file:///c:/Users/Vinicius%20Bassini/Downloads/foca-no-cell-helper-main/src/components/ui/chart.tsx)
+  - Sanitização de `color/theme` antes de inserir em `style`/CSS variables.
+  - Bloqueio de quebras de contexto (`</style>`, quebras de linha, NUL, etc.) e restrição a formatos esperados.
+- Testes: [chart.security.test.tsx](file:///c:/Users/Vinicius%20Bassini/Downloads/foca-no-cell-helper-main/src/components/ui/chart.security.test.tsx)
+
+### Rotas (React Router)
+
+- O fallback SPA no Vercel mantém rotas client-side funcionais: [vercel.json](file:///c:/Users/Vinicius%20Bassini/Downloads/foca-no-cell-helper-main/vercel.json)
+- Teste de integração de rotas e 404: [App.router.test.tsx](file:///c:/Users/Vinicius%20Bassini/Downloads/foca-no-cell-helper-main/src/App.router.test.tsx)
+
+### Checklist de revisão manual (base OWASP Top 10)
+
+- A01 Broken Access Control: app é SPA estática; não expor rotas/admin sem autenticação.
+- A02 Cryptographic Failures: todo tráfego em HTTPS via Vercel; HSTS habilitado em headers.
+- A03 Injection: sanitização de valores CSS e ausência de construção de HTML a partir de input não confiável.
+- A04 Insecure Design: CSP/headers defensivos e redução de superfícies (object-src none, frame-ancestors none).
+- A05 Security Misconfiguration: checks automatizados de CSP, secrets e dependências; build reproduzível em CI.
+- A06 Vulnerable/Outdated Components: `npm run security:audit` bloqueia vulnerabilidades altas em prod.
+- A07 Identification and Authentication Failures: não aplicável no estado atual (sem auth).
+- A08 Software and Data Integrity Failures: dependências travadas por lockfile; CI usa `npm ci`.
+- A09 Logging and Monitoring Failures: evitar logs sensíveis no client; manter logs somente para erro real.
+- A10 SSRF: não aplicável (sem backend).
+
+### CI/CD e simulação de deploy (staging/preview)
+
+- Pipeline: [.github/workflows/ci.yml](file:///c:/Users/Vinicius%20Bassini/Downloads/foca-no-cell-helper-main/.github/workflows/ci.yml)
+  - Executa lint + testes + build + checks de segurança via `npm run ci`.
+  - Simulação de deploy no Vercel (Preview) roda somente se secrets estiverem configurados:
+    - `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`
+  - O job faz `vercel pull`, `vercel build` e `vercel deploy --prebuilt` para validar o fluxo de staging.

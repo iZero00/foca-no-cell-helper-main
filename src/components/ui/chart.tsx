@@ -10,7 +10,31 @@ const normalizeChartId = (rawId: string) => rawId.replace(/[^a-zA-Z0-9_-]/g, "_"
 
 const normalizeCssVarKey = (rawKey: string) => rawKey.replace(/[^a-zA-Z0-9_-]/g, "_");
 
-const normalizeCssValue = (rawValue: string) => rawValue.replace(/[;\n\r\0}]/g, "");
+const sanitizeCssColorValue = (rawValue: string) => {
+  const value = rawValue.trim();
+  if (!value) return null;
+
+  if (value.length > 128) return null;
+  if (/[<>\0\r\n]/.test(value)) return null;
+
+  const hex = /^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
+  const rgb = /^rgba?\([0-9.,% /+\t-]*\)$/;
+  const hsl = /^hsla?\([0-9.,% /+\t-]*\)$/;
+  const varOnly = /^var\(--[a-zA-Z0-9_-]+\)$/;
+  const hslVar = /^hsl\(\s*var\(--[a-zA-Z0-9_-]+\)\s*\)$/;
+  const rgbVar = /^rgb\(\s*var\(--[a-zA-Z0-9_-]+\)\s*\)$/;
+  const keywords = /^(?:transparent|currentColor|inherit|initial|revert|unset)$/;
+
+  if (hex.test(value)) return value;
+  if (rgb.test(value)) return value;
+  if (hsl.test(value)) return value;
+  if (varOnly.test(value)) return value;
+  if (hslVar.test(value)) return value;
+  if (rgbVar.test(value)) return value;
+  if (keywords.test(value)) return value;
+
+  return null;
+};
 
 export type ChartConfig = {
   [k in string]: {
@@ -83,7 +107,7 @@ ${colorConfig
   .map(([key, itemConfig]) => {
     const color = itemConfig.theme?.[theme as keyof typeof itemConfig.theme] || itemConfig.color;
     const cssKey = normalizeCssVarKey(key);
-    const cssValue = color ? normalizeCssValue(color) : null;
+    const cssValue = color ? sanitizeCssColorValue(color) : null;
     return cssValue ? `  --color-${cssKey}: ${cssValue};` : null;
   })
   .join("\n")}
@@ -172,7 +196,8 @@ const ChartTooltipContent = React.forwardRef<
           {payload.map((item, index) => {
             const key = `${nameKey || item.name || item.dataKey || "value"}`;
             const itemConfig = getPayloadConfigFromPayload(config, item, key);
-            const indicatorColor = color || item.payload.fill || item.color;
+            const indicatorColorRaw = color || item.payload.fill || item.color;
+            const indicatorColor = typeof indicatorColorRaw === "string" ? sanitizeCssColorValue(indicatorColorRaw) : null;
 
             return (
               <div
@@ -199,8 +224,8 @@ const ChartTooltipContent = React.forwardRef<
                           })}
                           style={
                             {
-                              "--color-bg": indicatorColor,
-                              "--color-border": indicatorColor,
+                              "--color-bg": indicatorColor ?? undefined,
+                              "--color-border": indicatorColor ?? undefined,
                             } as React.CSSProperties
                           }
                         />
@@ -270,7 +295,8 @@ const ChartLegendContent = React.forwardRef<
               <div
                 className="h-2 w-2 shrink-0 rounded-[2px]"
                 style={{
-                  backgroundColor: item.color,
+                  backgroundColor:
+                    typeof item.color === "string" ? sanitizeCssColorValue(item.color) ?? undefined : undefined,
                 }}
               />
             )}
@@ -310,3 +336,5 @@ function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, key:
 }
 
 export { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent, ChartStyle };
+
+export { sanitizeCssColorValue };
