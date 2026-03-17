@@ -89,3 +89,5 @@ function useSiteConfig() {
 }
 
 export { SiteConfigProvider, useSiteConfig, getWhatsAppUrl, type SiteConfig, DEFAULT_CONFIG };
+
+export const __private = { sanitizePhone, normalizeConfig, safeReadConfig, safeWriteConfig };

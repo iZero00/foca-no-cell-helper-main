@@ -21,29 +21,29 @@ function buildWhatsAppUrl(message: string) {
 
 function formatWhatsAppItemMessage(item: WhatsAppItem) {
   const kindLabel = item.kind === "produto" ? "Produto" : "Serviço";
-  const kindEmoji = item.kind === "produto" ? "📦" : "🛠️";
   const title = normalizeText(item.title);
   const description = normalizeText(item.description);
   const category = normalizeText(item.category);
-  const price = formatMoney(item.priceCents, item.currency);
+  const price = item.priceCents > 0 ? formatMoney(item.priceCents, item.currency) : "Sob consulta";
   const imageUrl = (item.imageUrl ?? "").trim();
 
   const lines = [
-    `✨ *${kindLabel}*`,
+    `Olá! Tenho interesse no ${kindLabel.toLowerCase()} *${title}*`,
     "",
-    `${kindEmoji} *Nome:* ${title}`,
-    `💰 *Preço:* ${price}`,
-    `🏷️ *Categoria:* ${category}`,
+    `*${kindLabel}*`,
+    `- *Nome:* ${title}`,
+    `- *Preço:* ${price}`,
+    `- *Categoria:* ${category}`,
     "",
-    "📝 *Descrição*",
+    "*Descrição*",
     description,
   ];
 
   if (imageUrl.length > 0) {
-    lines.push("", `🖼️ *Imagem:* ${imageUrl}`);
+    lines.push("", `*Imagem:* ${imageUrl}`);
   }
 
-  lines.push("", "────────────", "📲 Me chama aqui no WhatsApp para confirmar disponibilidade.");
+  lines.push("", "---", "Pode me passar mais informações e confirmar disponibilidade?");
 
   return lines.join("\n");
 }

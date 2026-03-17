@@ -26,15 +26,35 @@ const Testimonials = () => (
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="text-center mb-12 sm:mb-16"
+        className="text-left mb-10 sm:mb-14"
       >
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-3">
-          Avaliações que falam por si
-          <span className="text-gradient-gold">.</span>
+        <div className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">Prova social</div>
+        <h2 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
+          Avaliações que falam por si<span className="text-gradient-gold">.</span>
         </h2>
-        <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          O objetivo é simples: devolver seu celular funcionando e você tranquilo.
+        <p className="mt-3 text-muted-foreground max-w-2xl leading-relaxed">
+          Leitura rápida: você entende o resultado esperado antes de ver os detalhes.
         </p>
+        <ul className="mt-5 grid gap-2 text-sm text-muted-foreground">
+          <li className="flex gap-3">
+            <span className="mt-2 h-2 w-2 rounded-full bg-primary" />
+            <span>
+              <span className="font-semibold text-foreground">Rapidez</span> no retorno e no reparo.
+            </span>
+          </li>
+          <li className="flex gap-3">
+            <span className="mt-2 h-2 w-2 rounded-full bg-primary" />
+            <span>
+              <span className="font-semibold text-foreground">Honestidade</span> no diagnóstico.
+            </span>
+          </li>
+          <li className="flex gap-3">
+            <span className="mt-2 h-2 w-2 rounded-full bg-primary" />
+            <span>
+              <span className="font-semibold text-foreground">Qualidade</span> no acabamento.
+            </span>
+          </li>
+        </ul>
       </motion.div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">

@@ -56,6 +56,9 @@ const Navbar = () => {
             <Button asChild variant="ghost" className="h-10 px-3 text-sm">
               <Link to="/produtos">Loja</Link>
             </Button>
+            <Button asChild variant="ghost" className="h-10 px-3 text-sm">
+              <Link to="/admin/login">Admin</Link>
+            </Button>
             {links.map((l) => (
               <Button key={l.href} asChild variant="ghost" className="h-10 px-3 text-sm">
                 <a href={`${homePrefix}${l.href}`}>{l.label}</a>
@@ -101,6 +104,14 @@ const Navbar = () => {
                 onClick={() => setMobileOpen(false)}
               >
                 <Link to="/produtos">Loja</Link>
+              </Button>
+              <Button
+                asChild
+                variant="ghost"
+                className="h-11 justify-start"
+                onClick={() => setMobileOpen(false)}
+              >
+                <Link to="/admin/login">Admin</Link>
               </Button>
               {links.map((l) => (
                 <Button

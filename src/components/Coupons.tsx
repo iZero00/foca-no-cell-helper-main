@@ -35,7 +35,32 @@ const Coupons = () => {
           </p>
         </motion.div>
 
-        <div className="grid gap-4 sm:gap-5 sm:grid-cols-2 max-w-3xl">
+        <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+          <div className="space-y-4 text-left">
+            <div className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">Como usar</div>
+            <ul className="grid gap-3 text-sm text-muted-foreground">
+              <li className="flex gap-3">
+                <span className="mt-2 h-2 w-2 rounded-full bg-primary" />
+                <span>
+                  <span className="font-semibold text-foreground">Copie</span> o código do cupom.
+                </span>
+              </li>
+              <li className="flex gap-3">
+                <span className="mt-2 h-2 w-2 rounded-full bg-primary" />
+                <span>
+                  <span className="font-semibold text-foreground">Envie</span> no WhatsApp durante o atendimento.
+                </span>
+              </li>
+              <li className="flex gap-3">
+                <span className="mt-2 h-2 w-2 rounded-full bg-primary" />
+                <span>
+                  <span className="font-semibold text-foreground">Pronto</span>: desconto aplicado quando válido.
+                </span>
+              </li>
+            </ul>
+          </div>
+
+          <div className="grid gap-4 sm:gap-5 sm:grid-cols-2">
           {coupons.map((c, i) => (
             <motion.div
               key={c.code}
@@ -64,9 +89,10 @@ const Coupons = () => {
                 <Copy className="w-4 h-4 text-muted-foreground" />
               </Button>
 
-              <p className="text-sm text-muted-foreground text-center">{c.description}</p>
+              <p className="text-sm text-muted-foreground text-left">{c.description}</p>
             </motion.div>
           ))}
+          </div>
         </div>
       </div>
     </section>

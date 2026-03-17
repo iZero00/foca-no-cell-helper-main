@@ -1,8 +1,14 @@
 import { motion } from "framer-motion";
 import { MessageCircle, ArrowDown, Wrench, Shield, Clock, Sparkles } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { getWhatsAppUrl, useSiteConfig } from "@/context/site-config";
+import { formatMoney } from "@/lib/money";
+import { getSupabase } from "@/lib/supabase";
+import { formatWhatsAppItemMessage } from "@/lib/whatsapp";
 
 const badges = [
   { icon: Clock, label: "Reparo Rápido" },
@@ -10,11 +16,94 @@ const badges = [
   { icon: Wrench, label: "Peças Originais" },
 ];
 
+type HeroProduct = {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  priceCents: number;
+  currency: string;
+  category: string;
+  images: string[];
+};
+
+type ProductSelectRow = {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  price_cents: number;
+  currency: string;
+  category: string;
+  images: unknown;
+};
+
+const fallbackHeroProducts: HeroProduct[] = [
+  {
+    id: "fallback-hero-cabo",
+    title: "Cabo USB-C Reforçado",
+    slug: "CABOUSB",
+    description: "Cabo reforçado para carga e dados.",
+    priceCents: 1990,
+    currency: "BRL",
+    category: "Acessórios",
+    images: [],
+  },
+  {
+    id: "fallback-hero-carregador",
+    title: "Carregador Turbo 20W",
+    slug: "CARREGADOR20W",
+    description: "Carregador rápido compatível com diversos modelos.",
+    priceCents: 4990,
+    currency: "BRL",
+    category: "Acessórios",
+    images: [],
+  },
+  {
+    id: "fallback-hero-pelicula",
+    title: "Película 3D",
+    slug: "PELICULA3D",
+    description: "Proteção de tela com excelente cobertura.",
+    priceCents: 2990,
+    currency: "BRL",
+    category: "Proteção",
+    images: [],
+  },
+];
+
 const Hero = () => {
   const { config } = useSiteConfig();
+  const { data, isLoading, isError } = useQuery<ProductSelectRow[]>({
+    queryKey: ["store", "home-products", { limit: 6 }],
+    queryFn: async () => {
+      const resp = await getSupabase()
+        .from("products")
+        .select("id, title, slug, description, price_cents, currency, category, images")
+        .eq("is_active", true)
+        .order("created_at", { ascending: false })
+        .range(0, 5);
+      if (resp.error) throw resp.error;
+      return (resp.data ?? []) as unknown as ProductSelectRow[];
+    },
+  });
+
+  const heroProducts: HeroProduct[] =
+    !isError && (data?.length ?? 0) > 0
+      ? data!.slice(0, 3).map((p) => ({
+          id: p.id,
+          title: p.title,
+          slug: p.slug,
+          description: p.description,
+          priceCents: p.price_cents,
+          currency: p.currency,
+          category: p.category,
+          images: Array.isArray(p.images) ? (p.images as string[]) : [],
+        }))
+      : fallbackHeroProducts;
+
   return (
     <section className="relative overflow-hidden bg-brand-splash">
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-28 pb-16 sm:pt-32 sm:pb-20">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-14 sm:pt-28 sm:pb-16">
       <div className="grid lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-14 items-center">
         <div className="text-left">
           <motion.div
@@ -63,6 +152,9 @@ const Hero = () => {
               </a>
             </Button>
             <Button asChild variant="outline" size="lg" className="sm:w-auto">
+              <Link to="/produtos">Ver loja</Link>
+            </Button>
+            <Button asChild variant="ghost" size="lg" className="sm:w-auto justify-start px-0 sm:px-4">
               <a href="#catalogo">
                 Ver serviços
                 <ArrowDown className="h-4 w-4" />
@@ -92,36 +184,64 @@ const Hero = () => {
           className="relative"
         >
           <div className="absolute -inset-6 -z-10 rounded-[2.5rem] bg-gold-gradient-subtle blur-2xl" />
-          <div className="relative overflow-hidden rounded-[2.25rem] border border-border bg-card shadow-gold-lg">
-            <div className="aspect-[4/3] sm:aspect-[16/11]">
-              <img
-                src="/icone.jpg"
-                alt="Mascote e identidade Foca no Cell"
-                className="h-full w-full object-cover"
-                loading="eager"
-              />
-            </div>
-            <div className="grid grid-cols-3 gap-2 p-4 sm:p-5 border-t border-border bg-card/60">
-              <div className="flex items-center gap-2">
-                <span className="h-9 w-9 rounded-2xl bg-primary/15 border border-primary/20 flex items-center justify-center">
-                  <Wrench className="h-4 w-4 text-primary" />
-                </span>
-                <span className="text-xs font-semibold text-muted-foreground">Reparo</span>
+          <section id="loja" className="relative overflow-hidden rounded-[2.25rem] border border-border bg-card shadow-gold-lg scroll-mt-24">
+            <CardHeader className="space-y-2 border-b border-border bg-card/60">
+              <div className="inline-flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+                <span className="h-2 w-2 rounded-full bg-primary" />
+                Loja em destaque
               </div>
-              <div className="flex items-center gap-2">
-                <span className="h-9 w-9 rounded-2xl bg-primary/15 border border-primary/20 flex items-center justify-center">
-                  <Shield className="h-4 w-4 text-primary" />
-                </span>
-                <span className="text-xs font-semibold text-muted-foreground">Garantia</span>
+              <CardTitle className="text-xl sm:text-2xl font-extrabold tracking-tight">Produtos prontos para você</CardTitle>
+              <div className="text-sm text-muted-foreground">Itens populares e fáceis de confirmar via WhatsApp.</div>
+            </CardHeader>
+            <CardContent className="p-5 sm:p-6 space-y-4">
+              {isLoading ? (
+                <div className="text-sm text-muted-foreground">Carregando produtos...</div>
+              ) : (
+                <div className="grid gap-3">
+                  {heroProducts.map((p) => {
+                    const message = formatWhatsAppItemMessage({
+                      kind: "produto",
+                      title: p.title,
+                      description: p.description,
+                      priceCents: p.priceCents,
+                      currency: p.currency,
+                      category: p.category,
+                      imageUrl: p.images?.[0] ?? null,
+                    });
+                    return (
+                      <div key={p.id} className="flex items-start justify-between gap-3 rounded-2xl border border-border bg-background/35 px-4 py-3">
+                        <div className="min-w-0">
+                          <div className="font-extrabold tracking-tight leading-tight truncate">{p.title}</div>
+                          <div className="text-xs font-semibold text-muted-foreground mt-1">
+                            {formatMoney(p.priceCents, p.currency)} • {p.category}
+                          </div>
+                        </div>
+                        <div className="flex gap-2 shrink-0">
+                          <Button asChild size="sm" variant="outline">
+                            <a href={getWhatsAppUrl(config, message)} target="_blank" rel="noopener noreferrer">
+                              WhatsApp
+                            </a>
+                          </Button>
+                          <Button asChild size="sm">
+                            <Link to={`/produto/${encodeURIComponent(p.slug || p.id)}`}>Ver</Link>
+                          </Button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Button asChild className="sm:flex-1">
+                  <Link to="/produtos">Ver todos os produtos</Link>
+                </Button>
+                <Button asChild variant="outline" className="sm:flex-1">
+                  <a href="#catalogo">Ir para serviços</a>
+                </Button>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="h-9 w-9 rounded-2xl bg-primary/15 border border-primary/20 flex items-center justify-center">
-                  <Clock className="h-4 w-4 text-primary" />
-                </span>
-                <span className="text-xs font-semibold text-muted-foreground">Rápido</span>
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </section>
         </motion.div>
       </div>
     </div>

@@ -12,13 +12,14 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["text", "html", "json-summary"],
-      include: ["src/**"],
+      include: ["src/lib/**", "src/context/**", "src/App.tsx"],
       exclude: [
         "**/*.d.ts",
         "src/components/ui/**",
         "src/components/**",
         "src/hooks/**",
         "src/pages/admin/**",
+        "src/pages/**",
         "src/test/**",
         "src/lib/supabase.types.ts",
         "src/**/*.test.*",

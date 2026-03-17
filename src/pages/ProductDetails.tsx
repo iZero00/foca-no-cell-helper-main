@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import { formatMoney } from "@/lib/money";
+import { getProductPrimaryImageUrl } from "@/lib/product-images";
 import { getSupabase } from "@/lib/supabase";
 import { buildWhatsAppUrl, formatWhatsAppItemMessage } from "@/lib/whatsapp";
 
@@ -67,7 +68,7 @@ export default function ProductDetails() {
 
   React.useEffect(() => {
     if (!data) return;
-    setSelectedImage(data.images?.[0] ?? null);
+    setSelectedImage(getProductPrimaryImageUrl(data.images, data.category, 0));
     const initial: Record<string, string> = {};
     for (const v of data.variations ?? []) {
       const opt = v?.options?.[0];
@@ -136,11 +137,7 @@ export default function ProductDetails() {
           <Card className="overflow-hidden">
             <CardContent className="p-4 space-y-4">
               <div className="aspect-[4/3] overflow-hidden rounded-2xl border border-border bg-card/40">
-                {selectedImage ? (
-                  <img src={selectedImage} alt={data.title} className="h-full w-full object-cover" />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">Sem imagem</div>
-                )}
+                <img src={selectedImage ?? getProductPrimaryImageUrl(data.images, data.category, 0)} alt={data.title} className="h-full w-full object-cover" />
               </div>
               {(data.images ?? []).length > 1 ? (
                 <div className="grid grid-cols-5 gap-2">

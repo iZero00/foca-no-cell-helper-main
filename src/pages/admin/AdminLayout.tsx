@@ -3,8 +3,8 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { logout } from "@/lib/admin-auth";
 import { cn } from "@/lib/utils";
-import { getSupabase } from "@/lib/supabase";
 
 export default function AdminLayout() {
   const navigate = useNavigate();
@@ -21,8 +21,8 @@ export default function AdminLayout() {
             <Button
               size="sm"
               variant="secondary"
-              onClick={async () => {
-                await getSupabase().auth.signOut();
+              onClick={() => {
+                logout();
                 navigate("/admin/login", { replace: true });
               }}
             >

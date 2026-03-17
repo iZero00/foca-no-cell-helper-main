@@ -12,6 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 
 import { formatMoney } from "@/lib/money";
+import { compressToJpeg, sdWebUiTxt2ImgPng } from "@/lib/sd-webui";
 import { getSupabase } from "@/lib/supabase";
 
 type ProductVariation = { name: string; options: string[] };
@@ -133,6 +134,21 @@ function safeUuid() {
   return `${Date.now().toString(16)}-${Math.random().toString(16).slice(2)}`;
 }
 
+function buildProductImagePrompt(input: { title: string; category: string; description: string }) {
+  const title = String(input.title ?? "").trim();
+  const category = String(input.category ?? "").trim();
+  const description = String(input.description ?? "").trim();
+  const parts = [
+    "Foto de produto em estúdio, realista, alta qualidade, composição quadrada, fundo branco clean, sombra suave.",
+    "Sem texto, sem logos, sem marcas d'água, sem etiquetas.",
+    "Iluminação profissional, nitidez alta, foco no produto, estilo e-commerce.",
+    `Produto: ${title}.`,
+  ];
+  if (category.length > 0) parts.push(`Categoria: ${category}.`);
+  if (description.length > 0) parts.push(`Detalhes: ${description}.`);
+  return parts.join(" ");
+}
+
 export default function AdminProductEdit() {
   const { id } = useParams();
   const productId = (id ?? "").trim();
@@ -221,6 +237,51 @@ export default function AdminProductEdit() {
       }
 
       return out;
+    },
+  });
+
+  const generateAiMutation = useMutation({
+    mutationFn: async () => {
+      const title = form.title.trim();
+      const category = form.category.trim();
+      const description = form.description.trim();
+      if (title.length === 0) throw new Error("Preencha o nome do item antes de gerar imagem.");
+      if (description.length === 0) throw new Error("Preencha a descrição antes de gerar imagem.");
+
+      const baseUrl = (import.meta.env.VITE_SD_WEBUI_URL as string | undefined) ?? "http://127.0.0.1:7860";
+      const negativePrompt =
+        (import.meta.env.VITE_SD_WEBUI_NEGATIVE_PROMPT as string | undefined) ??
+        "texto, logotipo, marca d'água, watermark, label, price tag, blurry, low quality, lowres";
+      const prompt = buildProductImagePrompt({ title, category, description });
+
+      const png = await sdWebUiTxt2ImgPng({
+        baseUrl,
+        prompt,
+        negativePrompt,
+        width: Number(import.meta.env.VITE_SD_WEBUI_WIDTH ?? 768),
+        height: Number(import.meta.env.VITE_SD_WEBUI_HEIGHT ?? 768),
+        steps: Number(import.meta.env.VITE_SD_WEBUI_STEPS ?? 24),
+        cfgScale: Number(import.meta.env.VITE_SD_WEBUI_CFG_SCALE ?? 6),
+        samplerName: String(import.meta.env.VITE_SD_WEBUI_SAMPLER ?? "DPM++ 2M Karras"),
+        seed: Number(import.meta.env.VITE_SD_WEBUI_SEED ?? -1),
+      });
+
+      const jpg = await compressToJpeg(png, 1400, 0.86);
+      if (jpg.size > 2_000_000) throw new Error("Imagem muito grande após compressão.");
+
+      const ext = "jpg";
+      const storagePath = `public/${safeUuid()}.${ext}`;
+      const uploadFile = new File([jpg], `${normalizeFileName(title)}.${ext}`, { type: "image/jpeg" });
+      const supabase = getSupabase();
+      const upload = await supabase.storage.from("product-images").upload(storagePath, uploadFile, { upsert: false });
+      if (upload.error) throw upload.error;
+      const { data } = supabase.storage.from("product-images").getPublicUrl(storagePath);
+      if (!data.publicUrl) throw new Error("Falha ao gerar URL pública da imagem.");
+      return data.publicUrl;
+    },
+    onSuccess: (url) => {
+      setImages((prev) => [url, ...prev].slice(0, 20));
+      toast.success("Imagem gerada e adicionada. Clique em salvar para aplicar.");
     },
   });
 
@@ -452,7 +513,7 @@ export default function AdminProductEdit() {
                 <div className="text-xs text-muted-foreground">Upload no Supabase Storage ou URLs públicas.</div>
               </div>
             </div>
-            <div className="grid gap-2 sm:grid-cols-[1fr_auto_auto]">
+            <div className="grid gap-2 sm:grid-cols-[1fr_auto_auto_auto]">
               <Input value={newImageUrl} onChange={(e) => setNewImageUrl(e.target.value)} placeholder="https://..." />
               <Button
                 type="button"
@@ -474,6 +535,21 @@ export default function AdminProductEdit() {
                 }}
               >
                 Adicionar URL
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                disabled={uploadMutation.isPending || generateAiMutation.isPending}
+                onClick={async () => {
+                  setError(null);
+                  try {
+                    await generateAiMutation.mutateAsync();
+                  } catch (e) {
+                    setError(e instanceof Error ? e.message : "Falha ao gerar imagem.");
+                  }
+                }}
+              >
+                {generateAiMutation.isPending ? "Gerando..." : "Gerar IA"}
               </Button>
               <label className="inline-flex">
                 <input

@@ -9,7 +9,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
+import { getWhatsAppUrl, useSiteConfig } from "@/context/site-config";
 import { formatMoney } from "@/lib/money";
+import { getProductPrimaryImageUrl } from "@/lib/product-images";
 import { getSupabase } from "@/lib/supabase";
 
 type ProductListItem = {
@@ -37,6 +39,7 @@ function clampPage(page: number) {
 }
 
 export default function Products() {
+  const { config } = useSiteConfig();
   const [sp, setSp] = useSearchParams();
   const q = sp.get("q") ?? "";
   const category = sp.get("category") ?? "todos";
@@ -162,24 +165,48 @@ export default function Products() {
           ) : error ? (
             <div className="text-destructive">Falha ao carregar produtos.</div>
           ) : (data?.items?.length ?? 0) === 0 ? (
-            <div className="text-muted-foreground">Nenhum produto encontrado.</div>
+            <Card>
+              <CardHeader className="space-y-2">
+                <CardTitle>Nenhum produto encontrado</CardTitle>
+                <div className="text-sm text-muted-foreground">
+                  Se você é administrador, adicione itens no painel. Se preferir, fale com a gente no WhatsApp.
+                </div>
+              </CardHeader>
+              <CardContent className="flex flex-wrap gap-2">
+                <Button asChild>
+                  <a
+                    href={getWhatsAppUrl(config, "Olá! Quero saber quais produtos estão disponíveis.")}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Falar no WhatsApp
+                  </a>
+                </Button>
+                <Button asChild variant="outline">
+                  <Link to="/admin/login">Acessar admin</Link>
+                </Button>
+              </CardContent>
+            </Card>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {data?.items.map((p) => (
-                <Card key={p.id} className="overflow-hidden">
+              {data?.items.map((p, i) => (
+                <Card key={p.id} className="overflow-hidden group">
                   <CardHeader className="space-y-2">
                     <CardTitle className="text-lg">{p.title}</CardTitle>
-                    <div className="text-sm font-semibold text-primary">{formatMoney(p.priceCents, p.currency)}</div>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    <div className="aspect-[4/3] overflow-hidden rounded-xl border border-border bg-card/40">
-                      {p.images?.[0] ? (
-                        <img src={p.images[0]} alt={p.title} className="h-full w-full object-cover" loading="lazy" />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
-                          Sem imagem
-                        </div>
-                      )}
+                    <div className="h-44 overflow-hidden relative rounded-xl border border-border bg-card/40">
+                      <img
+                        src={getProductPrimaryImageUrl(p.images, p.category, i)}
+                        alt={p.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-card via-card/30 to-transparent" />
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gold-gradient-subtle" />
+                      <span className="absolute top-3 right-3 px-3 py-1 rounded-full bg-background/70 glass text-[11px] font-semibold text-foreground border border-border">
+                        {formatMoney(p.priceCents, p.currency)}
+                      </span>
                     </div>
                     <div className="line-clamp-2 text-sm text-muted-foreground">{p.description}</div>
                     <div className="flex items-center justify-between gap-3">

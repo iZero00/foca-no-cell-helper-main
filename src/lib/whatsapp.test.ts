@@ -18,12 +18,14 @@ describe("whatsapp", () => {
       imageUrl: null,
     });
 
-    expect(msg).toContain("✨ *Produto*");
-    expect(msg).toContain("📦 *Nome:* Cabo USB");
-    expect(msg).toContain("🏷️ *Categoria:* Acessórios");
-    expect(msg).toContain("📝 *Descrição*");
+    expect(msg).toContain("Olá! Tenho interesse no produto *Cabo USB*");
+    expect(msg).toContain("*Produto*");
+    expect(msg).toContain("- *Nome:* Cabo USB");
+    expect(msg).toContain("- *Preço:* R$");
+    expect(msg).toContain("- *Categoria:* Acessórios");
+    expect(msg).toContain("*Descrição*");
     expect(msg).toContain("1m\nReforçado");
-    expect(msg).not.toContain("🖼️ *Imagem:*");
+    expect(msg).not.toContain("*Imagem:*");
   });
 
   it("adds image line when imageUrl is present", () => {
@@ -37,8 +39,9 @@ describe("whatsapp", () => {
       imageUrl: "https://example.com/img.jpg",
     });
 
-    expect(msg).toContain("🛠️ *Nome:* Troca de Tela");
-    expect(msg).toContain("🖼️ *Imagem:* https://example.com/img.jpg");
+    expect(msg).toContain("Olá! Tenho interesse no serviço *Troca de Tela*");
+    expect(msg).toContain("- *Nome:* Troca de Tela");
+    expect(msg).toContain("*Imagem:* https://example.com/img.jpg");
   });
 
   it("normalizes empty fields to a placeholder", () => {
@@ -52,8 +55,8 @@ describe("whatsapp", () => {
       imageUrl: null,
     });
 
-    expect(msg).toContain("📦 *Nome:* -");
-    expect(msg).toContain("🏷️ *Categoria:* -");
-    expect(msg).toContain("📝 *Descrição*");
+    expect(msg).toContain("- *Nome:* -");
+    expect(msg).toContain("- *Categoria:* -");
+    expect(msg).toContain("*Descrição*");
   });
 });

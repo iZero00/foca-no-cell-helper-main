@@ -46,13 +46,29 @@ const About = () => {
             Sobre a{" "}
             <span className="text-gradient-gold">Foca no Cell</span>
           </h2>
-          <p className="mt-4 text-muted-foreground leading-relaxed">
-            Assistência técnica especializada em manutenção de celulares, com foco em diagnóstico claro,
-            prazos honestos e acabamento impecável.
+          <p className="mt-4 text-muted-foreground leading-relaxed max-w-xl">
+            Assistência técnica especializada em manutenção de celulares, com foco em diagnóstico claro e atendimento direto.
           </p>
-          <p className="mt-4 text-muted-foreground leading-relaxed">
-            A ideia é simples: você chama, a gente resolve e devolve seu aparelho funcionando — sem dor de cabeça.
-          </p>
+          <ul className="mt-5 grid gap-2 text-sm text-muted-foreground">
+            <li className="flex gap-3">
+              <span className="mt-2 h-2 w-2 rounded-full bg-primary" />
+              <span>
+                <span className="font-semibold text-foreground">Diagnóstico</span> explicado de forma simples.
+              </span>
+            </li>
+            <li className="flex gap-3">
+              <span className="mt-2 h-2 w-2 rounded-full bg-primary" />
+              <span>
+                <span className="font-semibold text-foreground">Prazo</span> combinado e atualizado.
+              </span>
+            </li>
+            <li className="flex gap-3">
+              <span className="mt-2 h-2 w-2 rounded-full bg-primary" />
+              <span>
+                <span className="font-semibold text-foreground">Entrega</span> com garantia e acabamento.
+              </span>
+            </li>
+          </ul>
 
           <div className="flex flex-col gap-3">
             {details.map((d) => (
