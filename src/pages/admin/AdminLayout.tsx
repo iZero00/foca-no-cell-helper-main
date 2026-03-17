@@ -4,12 +4,7 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-
-import { LOCAL_AUTH_KEY } from "./AdminGuard";
-
-async function logoutServer() {
-  await fetch("/api/admin/logout", { method: "POST", credentials: "include" }).catch(() => undefined);
-}
+import { getSupabase } from "@/lib/supabase";
 
 export default function AdminLayout() {
   const navigate = useNavigate();
@@ -27,8 +22,7 @@ export default function AdminLayout() {
               size="sm"
               variant="secondary"
               onClick={async () => {
-                localStorage.removeItem(LOCAL_AUTH_KEY);
-                await logoutServer();
+                await getSupabase().auth.signOut();
                 navigate("/admin/login", { replace: true });
               }}
             >
@@ -38,8 +32,7 @@ export default function AdminLayout() {
           <Separator />
           <nav className="grid gap-1 p-3">
             <NavLink
-              end
-              to="/admin"
+              to="/admin/products"
               className={({ isActive }) =>
                 cn(
                   "rounded-lg px-3 py-2 text-sm font-semibold text-muted-foreground hover:bg-muted hover:text-foreground",
@@ -47,10 +40,10 @@ export default function AdminLayout() {
                 )
               }
             >
-              Visão geral
+              Produtos
             </NavLink>
             <NavLink
-              to="/admin/settings"
+              to="/admin/services"
               className={({ isActive }) =>
                 cn(
                   "rounded-lg px-3 py-2 text-sm font-semibold text-muted-foreground hover:bg-muted hover:text-foreground",
@@ -58,7 +51,7 @@ export default function AdminLayout() {
                 )
               }
             >
-              Configurações
+              Serviços
             </NavLink>
           </nav>
         </aside>

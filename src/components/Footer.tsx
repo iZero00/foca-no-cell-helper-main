@@ -14,7 +14,7 @@ const Footer = () => {
           </span>
           <div className="leading-tight">
             <div className="text-sm font-extrabold tracking-tight text-foreground">Foca no Cell</div>
-            <div className="text-xs font-semibold text-muted-foreground">Assistência técnica</div>
+            <div className="text-xs font-semibold text-muted-foreground">Assistência técnica • Araçatuba/SP</div>
           </div>
         </div>
 

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getWhatsAppUrl, useSiteConfig } from "@/context/site-config";
+import { Link, useLocation } from "react-router-dom";
 
 const links = [
   { label: "Serviços", href: "#catalogo" },
@@ -16,6 +17,8 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { config } = useSiteConfig();
+  const location = useLocation();
+  const homePrefix = location.pathname === "/" ? "" : "/";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -32,7 +35,7 @@ const Navbar = () => {
         className={scrolled ? "fixed top-0 left-0 right-0 z-50 glass bg-background/75 border-b border-border shadow-lg shadow-black/35" : "fixed top-0 left-0 right-0 z-50"}
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-[4.5rem] flex items-center justify-between">
-          <a href="#" className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3">
             <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-2xl border border-border bg-card shadow-sm shadow-black/20 ring-1 ring-white/5">
               <img
                 src="/icone.jpg"
@@ -44,15 +47,18 @@ const Navbar = () => {
             <span className="flex flex-col leading-none">
               <span className="text-[15px] font-extrabold tracking-tight text-foreground">Foca no Cell</span>
               <span className="text-[11px] font-semibold tracking-wide text-muted-foreground">
-                Assistência técnica
+                Assistência técnica • Araçatuba/SP
               </span>
             </span>
-          </a>
+          </Link>
 
           <div className="hidden md:flex items-center gap-1">
+            <Button asChild variant="ghost" className="h-10 px-3 text-sm">
+              <Link to="/produtos">Loja</Link>
+            </Button>
             {links.map((l) => (
               <Button key={l.href} asChild variant="ghost" className="h-10 px-3 text-sm">
-                <a href={l.href}>{l.label}</a>
+                <a href={`${homePrefix}${l.href}`}>{l.label}</a>
               </Button>
             ))}
             <Button asChild className="ml-2">
@@ -88,6 +94,14 @@ const Navbar = () => {
             className="fixed inset-x-0 top-[4.5rem] z-40 glass bg-background/92 border-b border-border p-4 md:hidden"
           >
             <div className="flex flex-col gap-2">
+              <Button
+                asChild
+                variant="ghost"
+                className="h-11 justify-start"
+                onClick={() => setMobileOpen(false)}
+              >
+                <Link to="/produtos">Loja</Link>
+              </Button>
               {links.map((l) => (
                 <Button
                   key={l.href}
@@ -96,7 +110,7 @@ const Navbar = () => {
                   className="h-11 justify-start"
                   onClick={() => setMobileOpen(false)}
                 >
-                  <a href={l.href}>{l.label}</a>
+                  <a href={`${homePrefix}${l.href}`}>{l.label}</a>
                 </Button>
               ))}
               <Button

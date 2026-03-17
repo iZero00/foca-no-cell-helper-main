@@ -1,14 +1,35 @@
 import { motion } from "framer-motion";
 import { MapPin, Clock, Phone, BadgeCheck } from "lucide-react";
+import { useSiteConfig } from "@/context/site-config";
 
-const details = [
-  { icon: Phone, label: "(67) 99307-3133" },
-  { icon: Clock, label: "Seg a Sáb • 8h às 18h" },
-  { icon: MapPin, label: "Campo Grande – MS" },
-];
+function formatPhone(digits: string) {
+  const raw = digits.replace(/[^\d]/g, "");
+  const d = raw.startsWith("55") ? raw.slice(2) : raw;
+  if (d.length === 11) {
+    const ddd = d.slice(0, 2);
+    const part1 = d.slice(2, 7);
+    const part2 = d.slice(7);
+    return `(${ddd}) ${part1}-${part2}`;
+  }
+  if (d.length === 10) {
+    const ddd = d.slice(0, 2);
+    const part1 = d.slice(2, 6);
+    const part2 = d.slice(6);
+    return `(${ddd}) ${part1}-${part2}`;
+  }
+  return `+${raw}`;
+}
 
-const About = () => (
-  <section id="sobre" className="py-20 sm:py-24 px-4 sm:px-6">
+const About = () => {
+  const { config } = useSiteConfig();
+  const details = [
+    { icon: Phone, label: formatPhone(config.whatsappNumber) },
+    { icon: Clock, label: "Seg a Sáb • 8h às 18h" },
+    { icon: MapPin, label: "Araçatuba – SP" },
+  ];
+
+  return (
+    <section id="sobre" className="py-20 sm:py-24 px-4 sm:px-6">
     <div className="max-w-6xl mx-auto">
       <div className="grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
         <motion.div
@@ -74,7 +95,7 @@ const About = () => (
                   </div>
                 </div>
                 <span className="rounded-full border border-border bg-background/40 px-3 py-1 text-[11px] font-semibold text-muted-foreground">
-                  Campo Grande – MS
+                  Araçatuba – SP
                 </span>
               </div>
             </div>
@@ -83,6 +104,7 @@ const About = () => (
       </div>
     </div>
   </section>
-);
+  );
+};
 
 export default About;

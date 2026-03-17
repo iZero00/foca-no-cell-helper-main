@@ -23,7 +23,7 @@ const Contact = () => {
             Precisa de um <span className="text-gradient-gold">orçamento</span>?
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto mb-10 leading-relaxed">
-            Envie uma mensagem e já diga qual serviço você precisa. Resposta rápida e objetiva.
+            Envie uma mensagem e já diga qual serviço você precisa. Atendimento em Araçatuba e região.
           </p>
 
           <Button asChild size="lg" className="mx-auto">

@@ -1,17 +1,17 @@
 import * as React from "react";
 import { Navigate, useLocation } from "react-router-dom";
 
-const LOCAL_AUTH_KEY = "admin:local-auth";
+import { getSupabase } from "@/lib/supabase";
 
-async function checkServerSession() {
-  const res = await fetch("/api/admin/me", { method: "GET", credentials: "include" });
-  if (res.ok) return true;
-  if (res.status === 401 || res.status === 403) return false;
-  return false;
-}
+async function checkAdminSession() {
+  const supabase = getSupabase();
+  const { data } = await supabase.auth.getSession();
+  const user = data.session?.user;
+  if (!user) return false;
 
-function hasLocalSession() {
-  return localStorage.getItem(LOCAL_AUTH_KEY) === "1";
+  const admin = await supabase.from("admins").select("role").eq("user_id", user.id).maybeSingle();
+  if (admin.error) return false;
+  return Boolean(admin.data?.role);
 }
 
 export default function AdminGuard({ children }: { children: React.ReactNode }) {
@@ -20,21 +20,24 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
 
   React.useEffect(() => {
     let cancelled = false;
-    (async () => {
-      if (hasLocalSession()) {
-        if (!cancelled) setStatus("authed");
-        return;
-      }
-
+    const run = async () => {
       try {
-        const ok = await checkServerSession();
+        const ok = await checkAdminSession();
         if (!cancelled) setStatus(ok ? "authed" : "anon");
       } catch {
         if (!cancelled) setStatus("anon");
       }
-    })();
+    };
+
+    run();
+    const supabase = getSupabase();
+    const { data: sub } = supabase.auth.onAuthStateChange(() => {
+      run();
+    });
+
     return () => {
       cancelled = true;
+      sub.subscription.unsubscribe();
     };
   }, []);
 
@@ -54,6 +57,3 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
 
   return <>{children}</>;
 }
-
-export { LOCAL_AUTH_KEY };
-

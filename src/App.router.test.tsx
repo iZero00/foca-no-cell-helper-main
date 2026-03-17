@@ -26,14 +26,14 @@ describe("React Router routes", () => {
     const { default: App } = await import("./App");
     window.history.pushState({}, "", "/");
     render(<App />);
-    expect(screen.getAllByText("Foca no Cell").length).toBeGreaterThan(0);
+    expect(await screen.findByRole("link", { name: "Loja" }, { timeout: 10_000 })).toBeInTheDocument();
   });
 
   it("renders 404 for unknown routes", async () => {
     const { default: App } = await import("./App");
     window.history.pushState({}, "", "/rota-inexistente");
     render(<App />);
-    expect(screen.getByText("404")).toBeInTheDocument();
-    expect(screen.getByText("Oops! Page not found")).toBeInTheDocument();
+    expect(await screen.findByText("404", {}, { timeout: 10_000 })).toBeInTheDocument();
+    expect(await screen.findByText("Página não encontrada.", {}, { timeout: 10_000 })).toBeInTheDocument();
   });
 });

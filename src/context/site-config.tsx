@@ -9,7 +9,7 @@ const STORAGE_KEY = "site:config:v1";
 
 const DEFAULT_CONFIG: SiteConfig = {
   whatsappNumber: "5567993073133",
-  defaultWhatsAppMessage: "Olá! Vim pelo site da Foca no Cell.",
+  defaultWhatsAppMessage: "Olá! Vim pelo site da Foca no Cell (Araçatuba/SP).",
 };
 
 function sanitizePhone(raw: string) {
@@ -89,4 +89,3 @@ function useSiteConfig() {
 }
 
 export { SiteConfigProvider, useSiteConfig, getWhatsAppUrl, type SiteConfig, DEFAULT_CONFIG };
-

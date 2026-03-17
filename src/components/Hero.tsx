@@ -57,7 +57,7 @@ const Hero = () => {
             className="mt-8 flex flex-col sm:flex-row gap-3 sm:items-center"
           >
             <Button asChild size="lg" className="sm:w-auto">
-              <a href={getWhatsAppUrl(config, "Olá! Vim pelo site da Foca no Cell.")} target="_blank" rel="noopener noreferrer">
+              <a href={getWhatsAppUrl(config, "Olá! Vim pelo site da Foca no Cell (Araçatuba/SP).")} target="_blank" rel="noopener noreferrer">
                 <MessageCircle className="h-5 w-5" />
                 Chamar no WhatsApp
               </a>

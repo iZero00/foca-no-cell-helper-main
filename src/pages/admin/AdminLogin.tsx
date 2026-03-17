@@ -6,36 +6,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import { LOCAL_AUTH_KEY } from "./AdminGuard";
+import { getSupabase } from "@/lib/supabase";
 
 type LocationState = { from?: string } | null;
-
-async function loginServer(password: string) {
-  const res = await fetch("/api/admin/login", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify({ password }),
-  });
-  if (!res.ok) {
-    const message = await res.text().catch(() => "");
-    throw new Error(message || "Falha ao autenticar.");
-  }
-}
-
-function loginLocal(password: string) {
-  const configured = (import.meta.env as unknown as { VITE_ADMIN_PIN?: string }).VITE_ADMIN_PIN;
-  if (typeof configured !== "string" || configured.length === 0) return false;
-  if (password !== configured) return false;
-  localStorage.setItem(LOCAL_AUTH_KEY, "1");
-  return true;
-}
 
 export default function AdminLogin() {
   const navigate = useNavigate();
   const location = useLocation();
   const state = (location.state as LocationState) ?? null;
 
+  const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [submitting, setSubmitting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
@@ -58,14 +38,8 @@ export default function AdminLogin() {
                 setError(null);
                 setSubmitting(true);
                 try {
-                  try {
-                    await loginServer(password);
-                  } catch {
-                    const ok = loginLocal(password);
-                    if (!ok) {
-                      throw new Error("Credenciais inválidas.");
-                    }
-                  }
+                  const resp = await getSupabase().auth.signInWithPassword({ email, password });
+                  if (resp.error) throw resp.error;
                   navigate(destination, { replace: true });
                 } catch (err) {
                   setError(err instanceof Error ? err.message : "Erro ao autenticar.");
@@ -74,6 +48,17 @@ export default function AdminLogin() {
                 }
               }}
             >
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="voce@empresa.com"
+                />
+              </div>
               <div className="grid gap-2">
                 <Label htmlFor="password">Senha</Label>
                 <Input
@@ -86,9 +71,53 @@ export default function AdminLogin() {
                 />
               </div>
               {error ? <div className="text-sm text-destructive">{error}</div> : null}
-              <Button type="submit" disabled={submitting || password.length === 0}>
+              <Button type="submit" disabled={submitting || email.length === 0 || password.length === 0}>
                 {submitting ? "Entrando…" : "Entrar"}
               </Button>
+              <div className="grid gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={submitting}
+                  onClick={async () => {
+                    setError(null);
+                    setSubmitting(true);
+                    try {
+                      const resp = await getSupabase().auth.signInWithOAuth({
+                        provider: "google",
+                        options: { redirectTo: `${window.location.origin}/admin` },
+                      });
+                      if (resp.error) throw resp.error;
+                    } catch (err) {
+                      setError(err instanceof Error ? err.message : "Erro ao autenticar.");
+                      setSubmitting(false);
+                    }
+                  }}
+                >
+                  Entrar com Google
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={submitting}
+                  onClick={async () => {
+                    setError(null);
+                    setSubmitting(true);
+                    try {
+                      const resp = await getSupabase().auth.signInWithOAuth({
+                        provider: "github",
+                        options: { redirectTo: `${window.location.origin}/admin` },
+                      });
+                      if (resp.error) throw resp.error;
+                    } catch (err) {
+                      setError(err instanceof Error ? err.message : "Erro ao autenticar.");
+                      setSubmitting(false);
+                    }
+                  }}
+                >
+                  Entrar com GitHub
+                </Button>
+              </div>
               <Button
                 type="button"
                 variant="secondary"

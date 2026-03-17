@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { MessageCircle, ArrowUpRight } from "lucide-react";
 import imgTela from "@/assets/service-tela.jpg";
@@ -8,8 +9,11 @@ import imgSoftware from "@/assets/service-software.jpg";
 import imgAcessorios from "@/assets/service-acessorios.jpg";
 
 import { getWhatsAppUrl, useSiteConfig } from "@/context/site-config";
+import { formatMoney } from "@/lib/money";
+import { getSupabase } from "@/lib/supabase";
+import { formatWhatsAppItemMessage } from "@/lib/whatsapp";
 
-const services = [
+const fallbackServices = [
   { name: "Troca de Tela", description: "iPhone, Samsung, Motorola e outras marcas", price: "Sob consulta", message: "Olá! Tenho interesse na Troca de Tela. Pode me passar mais informações?", image: imgTela },
   { name: "Troca de Bateria", description: "Baterias novas com garantia", price: "Sob consulta", message: "Olá! Tenho interesse na Troca de Bateria.", image: imgBateria },
   { name: "Conserto de Placa", description: "Reparos avançados em placa", price: "Sob consulta", message: "Olá! Preciso de conserto de placa no meu celular.", image: imgPlaca },
@@ -20,6 +24,40 @@ const services = [
 
 const Catalog = () => {
   const { config } = useSiteConfig();
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["store", "services", { limit: 6 }],
+    queryFn: async () => {
+      const resp = await getSupabase()
+        .from("services")
+        .select("id, title, description, price_cents, currency, category, images")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true })
+        .order("created_at", { ascending: false })
+        .range(0, 5);
+      if (resp.error) throw resp.error;
+      return resp.data;
+    },
+  });
+
+  const items =
+    !isError && (data?.length ?? 0) > 0
+      ? data!.map((s, i) => {
+          const imageUrl = Array.isArray(s.images) ? (s.images as string[])[0] : undefined;
+          const fallbackImage = [imgTela, imgBateria, imgPlaca, imgConector, imgSoftware, imgAcessorios][i % 6];
+          const priceLabel = s.price_cents > 0 ? formatMoney(s.price_cents, s.currency) : "Sob consulta";
+          const message = formatWhatsAppItemMessage({
+            kind: "serviço",
+            title: s.title,
+            description: s.description,
+            priceCents: s.price_cents,
+            currency: s.currency,
+            category: s.category,
+            imageUrl: imageUrl ?? null,
+          });
+          return { key: s.id, name: s.title, description: s.description, price: priceLabel, message, image: imageUrl ?? fallbackImage };
+        })
+      : fallbackServices.map((s) => ({ key: s.name, ...s }));
+
   return (
     <section id="catalogo" className="py-20 sm:py-24 px-4 sm:px-6">
     <div className="max-w-6xl mx-auto">
@@ -43,9 +81,12 @@ const Catalog = () => {
       </motion.div>
 
       <div className="grid gap-4 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {services.map((s, i) => (
+        {isLoading ? (
+          <div className="text-sm text-muted-foreground">Carregando serviços...</div>
+        ) : null}
+        {items.map((s, i) => (
           <motion.a
-            key={s.name}
+            key={s.key}
             href={getWhatsAppUrl(config, s.message)}
             target="_blank"
             rel="noopener noreferrer"
