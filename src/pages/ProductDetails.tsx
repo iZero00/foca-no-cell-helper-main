@@ -28,6 +28,19 @@ type ProductResponse = {
   images: string[];
 };
 
+type ProductRow = {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  price_cents: number;
+  currency: string;
+  category: string;
+  stock: number;
+  variations: unknown;
+  images: unknown;
+};
+
 export default function ProductDetails() {
   const { id } = useParams();
   const safeId = (id ?? "").trim();
@@ -37,27 +50,30 @@ export default function ProductDetails() {
     queryFn: async () => {
       const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
       const supabase = getSupabase();
-      const field = UUID_RE.test(safeId) ? "id" : "slug";
-      const resp = await supabase
+      const baseQuery = supabase
         .from("products")
         .select("id, title, slug, description, price_cents, currency, category, stock, variations, images")
-        .eq("is_active", true)
-        .eq(field, safeId)
-        .maybeSingle();
+        .eq("is_active", true);
+
+      const resp = (await (UUID_RE.test(safeId) ? baseQuery.eq("id", safeId) : baseQuery.eq("slug", safeId)).maybeSingle()) as unknown as {
+        data: ProductRow | null;
+        error: unknown | null;
+      };
       if (resp.error) throw resp.error;
       if (!resp.data) throw new Error("Produto não encontrado.");
+      const row = resp.data;
 
       return {
-        id: resp.data.id,
-        title: resp.data.title,
-        slug: resp.data.slug,
-        description: resp.data.description,
-        priceCents: resp.data.price_cents,
-        currency: resp.data.currency,
-        category: resp.data.category,
-        stock: resp.data.stock,
-        variations: Array.isArray(resp.data.variations) ? (resp.data.variations as ProductVariation[]) : [],
-        images: Array.isArray(resp.data.images) ? (resp.data.images as string[]) : [],
+        id: row.id,
+        title: row.title,
+        slug: row.slug,
+        description: row.description,
+        priceCents: row.price_cents,
+        currency: row.currency,
+        category: row.category,
+        stock: row.stock,
+        variations: Array.isArray(row.variations) ? (row.variations as ProductVariation[]) : [],
+        images: Array.isArray(row.images) ? (row.images as string[]) : [],
       } satisfies ProductResponse;
     },
     enabled: safeId.length > 0,

@@ -33,6 +33,19 @@ type ProductsResponse = {
   items: ProductListItem[];
 };
 
+type ProductCategoryRow = { category: string | null };
+type ProductListRow = {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  price_cents: number;
+  currency: string;
+  category: string;
+  stock: number;
+  images: unknown;
+};
+
 function clampPage(page: number) {
   if (!Number.isFinite(page)) return 1;
   return Math.max(1, Math.min(9999, Math.floor(page)));
@@ -51,8 +64,9 @@ export default function Products() {
       const supabase = getSupabase();
       const resp = await supabase.from("products").select("category").eq("is_active", true).limit(1000);
       if (resp.error) throw resp.error;
+      const rows = (resp.data ?? []) as unknown as ProductCategoryRow[];
       const categories = Array.from(
-        new Set(resp.data.map((r) => r.category).filter((c): c is string => typeof c === "string" && c.length > 0)),
+        new Set(rows.map((r) => r.category).filter((c): c is string => typeof c === "string" && c.length > 0)),
       ).sort((a, b) => a.localeCompare(b, "pt-BR"));
       return { items: categories };
     },
@@ -82,12 +96,13 @@ export default function Products() {
 
       const resp = await query.order("created_at", { ascending: false }).range(offset, offset + pageSize - 1);
       if (resp.error) throw resp.error;
+      const rows = (resp.data ?? []) as unknown as ProductListRow[];
 
       return {
         page,
         pageSize,
         total: resp.count ?? 0,
-        items: resp.data.map((r) => ({
+        items: rows.map((r) => ({
           id: r.id,
           title: r.title,
           slug: r.slug,

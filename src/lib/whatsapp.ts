@@ -11,7 +11,7 @@ type WhatsAppItem = {
 };
 
 function normalizeText(input: string) {
-  const s = input.replaceAll("\r\n", "\n").replaceAll("\r", "\n").trim();
+  const s = input.replace(/\r\n/g, "\n").replace(/\r/g, "\n").trim();
   return s.length > 0 ? s : "-";
 }
 
